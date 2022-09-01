@@ -1,0 +1,211 @@
+diff --git a/node_modules/@dfinity/agent/lib/cjs/agent/http/index.js b/node_modules/@dfinity/agent/lib/cjs/agent/http/index.js
+index 8ede9f7..1f4ccc5 100644
+--- a/node_modules/@dfinity/agent/lib/cjs/agent/http/index.js
++++ b/node_modules/@dfinity/agent/lib/cjs/agent/http/index.js
+@@ -205,7 +205,7 @@ class HttpAgent {
+         // Run both in parallel. The fetch is quite expensive, so we have plenty of time to
+         // calculate the requestId locally.
+         const [response, requestId] = await Promise.all([
+-            this._fetch('' + new URL(`/api/v2/canister/${ecid.toText()}/call`, this._host), Object.assign(Object.assign({}, transformedRequest.request), { body })),
++            this._fetch('' + new URL(`/api/v2/canister/${ecid.toText()}/call`, this._host), Object.assign(Object.assign({reactNative: {textStreaming: true}}, transformedRequest.request), { body })),
+             (0, request_id_1.requestIdOf)(submit),
+         ]);
+         if (!response.ok) {
+diff --git a/node_modules/@dfinity/agent/lib/cjs/vendor/bls/bls.js b/node_modules/@dfinity/agent/lib/cjs/vendor/bls/bls.js
+index 55fe87d..b0e9278 100644
+--- a/node_modules/@dfinity/agent/lib/cjs/vendor/bls/bls.js
++++ b/node_modules/@dfinity/agent/lib/cjs/vendor/bls/bls.js
+@@ -24,7 +24,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.bls_verify = exports.bls_init = void 0;
+-const base64Arraybuffer = __importStar(require("base64-arraybuffer"));
++// const base64Arraybuffer = __importStar(require("base64-arraybuffer"));
++const bls = __importStar(require("bls-patch/bls"));
+ // This WASM is generated from the miracl BLS Rust code (see
+ // https://github.com/dfinity/miracl_core_bls12381/)
+ const wasm_1 = require("./wasm");
+@@ -36,14 +37,14 @@ const wasmBytes = base64Arraybuffer.decode(wasm_1.wasmBytesBase64);
+  * @returns {number}
+  */
+ function bls_init() {
+-    let ret = wasm.bls_init();
++    let ret = bls.bls_init();
+     return ret;
+ }
+ exports.bls_init = bls_init;
+ let cachegetUint8Memory0 = null;
+ function getUint8Memory0() {
+-    if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== wasm.memory.buffer) {
+-        cachegetUint8Memory0 = new Uint8Array(wasm.memory.buffer);
++    if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== bls.memory.buffer) {
++        cachegetUint8Memory0 = new Uint8Array(bls.memory.buffer);
+     }
+     return cachegetUint8Memory0;
+ }
+@@ -59,34 +60,34 @@ function passArray8ToWasm0(arg, malloc) {
+  * @returns {number}
+  */
+ function bls_verify(sig, m, w) {
+-    const [ptr0, len0] = passArray8ToWasm0(sig, wasm.__wbindgen_malloc);
+-    const [ptr1, len1] = passArray8ToWasm0(m, wasm.__wbindgen_malloc);
+-    const [ptr2, len2] = passArray8ToWasm0(w, wasm.__wbindgen_malloc);
+-    const ret = wasm.bls_verify(ptr0, len0, ptr1, len1, ptr2, len2);
++    const [ptr0, len0] = passArray8ToWasm0(sig, bls.__wbindgen_malloc);
++    const [ptr1, len1] = passArray8ToWasm0(m, bls.__wbindgen_malloc);
++    const [ptr2, len2] = passArray8ToWasm0(w, bls.__wbindgen_malloc);
++    const ret = bls.bls_verify(ptr0, len0, ptr1, len1, ptr2, len2);
+     return ret;
+ }
+ exports.bls_verify = bls_verify;
+-async function load(module, imports) {
+-    if (typeof Response === 'function' && module instanceof Response) {
+-        const bytes = await module.arrayBuffer();
+-        return await WebAssembly.instantiate(bytes, imports);
+-    }
+-    else {
+-        const instance = await WebAssembly.instantiate(module, imports);
+-        if (instance instanceof WebAssembly.Instance) {
+-            return { instance, module };
+-        }
+-        else {
+-            return instance;
+-        }
+-    }
+-}
++// async function load(module, imports) {
++//     if (typeof Response === 'function' && module instanceof Response) {
++//         const bytes = await module.arrayBuffer();
++//         return await WebAssembly.instantiate(bytes, imports);
++//     }
++//     else {
++//         const instance = await WebAssembly.instantiate(module, imports);
++//         if (instance instanceof WebAssembly.Instance) {
++//             return { instance, module };
++//         }
++//         else {
++//             return instance;
++//         }
++//     }
++// }
+ async function init() {
+-    const imports = {};
+-    const { instance, module } = await load(wasmBytes, imports);
+-    wasm = instance.exports;
+-    init.__wbindgen_wasm_module = module;
+-    return wasm;
++    // const imports = {};
++    // const { instance, module } = await load(wasmBytes, imports);
++    // wasm = instance.exports;
++    // init.__wbindgen_wasm_module = module;
++    return bls;
+ }
+ /**
+  * If `module_or_path` is {RequestInfo} or {URL}, makes a request and
+diff --git a/node_modules/@dfinity/agent/lib/esm/agent/http/index.js b/node_modules/@dfinity/agent/lib/esm/agent/http/index.js
+index d779a2b..c0765dc 100644
+--- a/node_modules/@dfinity/agent/lib/esm/agent/http/index.js
++++ b/node_modules/@dfinity/agent/lib/esm/agent/http/index.js
+@@ -174,7 +174,7 @@ export class HttpAgent {
+         // Run both in parallel. The fetch is quite expensive, so we have plenty of time to
+         // calculate the requestId locally.
+         const [response, requestId] = await Promise.all([
+-            this._fetch('' + new URL(`/api/v2/canister/${ecid.toText()}/call`, this._host), Object.assign(Object.assign({}, transformedRequest.request), { body })),
++            this._fetch('' + new URL(`/api/v2/canister/${ecid.toText()}/call`, this._host), Object.assign(Object.assign({reactNative: {textStreaming: true}}, transformedRequest.request), { body })),
+             requestIdOf(submit),
+         ]);
+         if (!response.ok) {
+diff --git a/node_modules/@dfinity/agent/lib/esm/vendor/bls/bls.js b/node_modules/@dfinity/agent/lib/esm/vendor/bls/bls.js
+index cf0f38e..2b29b48 100644
+--- a/node_modules/@dfinity/agent/lib/esm/vendor/bls/bls.js
++++ b/node_modules/@dfinity/agent/lib/esm/vendor/bls/bls.js
+@@ -1,22 +1,24 @@
+ import * as base64Arraybuffer from 'base64-arraybuffer';
+ // This WASM is generated from the miracl BLS Rust code (see
+ // https://github.com/dfinity/miracl_core_bls12381/)
+-import { wasmBytesBase64 } from './wasm';
++//import { wasmBytesBase64 } from './wasm';
++import bls from 'bls-patch/bls'
+ /* tslint:disable */
+ /* eslint-disable */
+-let wasm;
+-const wasmBytes = base64Arraybuffer.decode(wasmBytesBase64);
++//let wasm;
++//const wasmBytes = base64Arraybuffer.decode(wasmBytesBase64);
++
+ /**
+  * @returns {number}
+  */
+ export function bls_init() {
+-    let ret = wasm.bls_init();
++    let ret = bls.bls_init().bls_init();
+     return ret;
+ }
+ let cachegetUint8Memory0 = null;
+ function getUint8Memory0() {
+-    if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== wasm.memory.buffer) {
+-        cachegetUint8Memory0 = new Uint8Array(wasm.memory.buffer);
++    if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== bls.memory.buffer) {
++        cachegetUint8Memory0 = new Uint8Array(bls.memory.buffer);
+     }
+     return cachegetUint8Memory0;
+ }
+@@ -32,33 +34,34 @@ function passArray8ToWasm0(arg, malloc) {
+  * @returns {number}
+  */
+ export function bls_verify(sig, m, w) {
+-    const [ptr0, len0] = passArray8ToWasm0(sig, wasm.__wbindgen_malloc);
+-    const [ptr1, len1] = passArray8ToWasm0(m, wasm.__wbindgen_malloc);
+-    const [ptr2, len2] = passArray8ToWasm0(w, wasm.__wbindgen_malloc);
+-    const ret = wasm.bls_verify(ptr0, len0, ptr1, len1, ptr2, len2);
++    const [ptr0, len0] = passArray8ToWasm0(sig, bls.__wbindgen_malloc);
++    const [ptr1, len1] = passArray8ToWasm0(m, bls.__wbindgen_malloc);
++    const [ptr2, len2] = passArray8ToWasm0(w, bls.__wbindgen_malloc);
++    const ret = bls.bls_verify(ptr0, len0, ptr1, len1, ptr2, len2);
+     return ret;
+ }
+-async function load(module, imports) {
+-    if (typeof Response === 'function' && module instanceof Response) {
+-        const bytes = await module.arrayBuffer();
+-        return await WebAssembly.instantiate(bytes, imports);
+-    }
+-    else {
+-        const instance = await WebAssembly.instantiate(module, imports);
+-        if (instance instanceof WebAssembly.Instance) {
+-            return { instance, module };
+-        }
+-        else {
+-            return instance;
+-        }
+-    }
+-}
++// async function load(module, imports) {
++//     if (typeof Response === 'function' && module instanceof Response) {
++//         const bytes = await module.arrayBuffer();
++//         return await WebAssembly.instantiate(bytes, imports);
++//     }
++//     else {
++//         const instance = await WebAssembly.instantiate(module, imports);
++//         if (instance instanceof WebAssembly.Instance) {
++//             return { instance, module };
++//         }
++//         else {
++//             return instance;
++//         }
++//     }
++// }
+ async function init() {
+-    const imports = {};
+-    const { instance, module } = await load(wasmBytes, imports);
+-    wasm = instance.exports;
+-    init.__wbindgen_wasm_module = module;
+-    return wasm;
++    // const imports = {};
++    // const { instance, module } = await load(wasmBytes, imports);
++    // wasm = instance.exports;
++    // init.__wbindgen_wasm_module = module;
++    // return wasm;
++    return bls;
+ }
+ /**
+  * If `module_or_path` is {RequestInfo} or {URL}, makes a request and

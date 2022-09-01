@@ -1,0 +1,47 @@
+{
+  "name": "RN070RC4",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^0.13.2",
+    "@dfinity/candid": "^0.13.2",
+    "@dfinity/principal": "^0.13.2",
+    "base-64": "^1.0.0",
+    "bls-patch": "./bls-patch",
+    "patch-package": "^6.4.7",
+    "react": "18.1.0",
+    "react-native": "0.70.0-rc.4",
+    "react-native-base64": "^0.2.1",
+    "react-native-fetch": "^2.0.0",
+    "react-native-fetch-api": "^3.0.0",
+    "react-native-get-random-values": "^1.8.0",
+    "react-native-polyfill-globals": "^3.1.0",
+    "react-native-url-polyfill": "^1.3.0",
+    "react-native-v8": "^1.4.7",
+    "text-encoding": "^0.7.0",
+    "uuid": "^8.3.2",
+    "web-streams-polyfill": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "babel-jest": "^26.6.3",
+    "bls": "file:bls-patch/bls-1.0.0.tgz",
+    "eslint": "^7.32.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.72.1",
+    "react-test-renderer": "18.1.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
